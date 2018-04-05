@@ -32,8 +32,6 @@ namespace HT_1
             }
             string pattern = @"(\-*\d+)([\+\-\*\/])";
             Match selection = Regex.Match(inPhrase,pattern,RegexOptions.IgnoreCase);
-           // Match startNumber = Regex.Match(inPhrase, @"\-*\d+", RegexOptions.IgnoreCase);  //Берем первое число в строке
-           // Match startOperator = Regex.Match(inPhrase, @"[\+\-\*\/]", RegexOptions.IgnoreCase);  //Берем первый оператор в строке
             switch (selection.Groups[2].Value) {
                 case "+":
                     return Convert.ToInt32(selection.Groups[1].Value) + SimpleParse(inPhrase.Substring(selection.Groups[0].Value.Length));
