@@ -16,22 +16,9 @@ namespace HT_1
         
         static void Main(string[] args)
         {  
-            string[] phrases= new string[] { @"-1+2=3", @"2+2*2=6", @"1-6/2m=-2" };
-            string pattern = @"^(\-*\d+)([\+\-\*\/])(\d+)([\+\-\*\/])*(\d+)*=(\-*\d+)$"; //  @"^(\-*\d+)" - с начала строки, (\-*\d+)$ - в конце строки 
-            foreach (string phrase in phrases) {
-                bool notMatch = true;
-                foreach (Match match in Regex.Matches(phrase, pattern, RegexOptions.IgnoreCase)) {
-                    notMatch = false;
-                    Console.WriteLine("Выражение " + phrase + " возможно вычислить");
-                   // Console.WriteLine(match.Value +" " + match.Groups[0].Value +" " + match.Groups[2].Value + " "+ match.Index);
-                }
-                if (notMatch) { // Если нет совпадений
-                    Console.WriteLine("Выражение "+ phrase + " не возможно вычислить");
-                }
-            }
-            string phrase1 =  @"-1*2+3+4*6*6/1";
-            Console.WriteLine(phrase1+"="+SimpleParse(phrase1));
-            
+            Console.WriteLine("Введите выражение для парсинга:");
+            string phrase = Console.ReadLine();
+            Console.WriteLine(phrase +"="+ SimpleParse(phrase));
         }
         /// <summary>
         /// Рекурсия с определением сложения и вычитания
