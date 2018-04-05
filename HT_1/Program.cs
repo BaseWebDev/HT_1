@@ -29,10 +29,9 @@ namespace HT_1
                     Console.WriteLine("Выражение "+ phrase + " не возможно вычислить");
                 }
             }
-            string phrase1 =  @"1+2+3+4+5+6";
-            Console.WriteLine(SimpleParse(phrase1));
+            string phrase1 =  @"1+2+3+4+5*6+1";
+            Console.WriteLine(phrase1+"="+SimpleParse(phrase1));
 
-            Console.ReadKey();
             // Посимвольный ввод 
             /*  
               char inChar;
@@ -55,7 +54,7 @@ namespace HT_1
                 case "-":
                     return Convert.ToInt32(startNumber.Value) - SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
                 default:
-                    return Convert.ToInt32(startNumber.Value) - SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
+                    return SimpleParse(MultiOrDivision(inPhrase));
 
                     /*case "*":
                         return Convert.ToInt32(startNumber.Value) * SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
@@ -64,13 +63,21 @@ namespace HT_1
             }
           //  return 0;
         }
-        private static int MultiParse(string inNumber1, string inOperator, string inSubPhrase) {
-            Match startNumber = Regex.Match(inSubPhrase, @"\d+", RegexOptions.IgnoreCase);  //Берем первое число в строке
-            switch (inOperator) {
+        /// <summary>
+        /// Преобразование умножения в сложение
+        /// </summary>
+        /// <param name="inSubPhrase">входная подстрока</param>
+        /// <returns></returns>
+        private static string MultiOrDivision(string inSubPhrase) {
+            string pattern = @"(\d+)([\*\/])(\d+)";
+           //  Match match in Regex.Matches(inSubPhrase, pattern, RegexOptions.IgnoreCase)
+            Match selection = Regex.Match(inSubPhrase, pattern, RegexOptions.IgnoreCase);  //Берем первое число в строке @"\d+"
+       //     Match startOperator = Regex.Match(inSubPhrase, @"[\+\-\*\/]", RegexOptions.IgnoreCase);  //Берем первый оператор в строке
+            switch (selection.Groups[2].Value) {
                 case "*":
-                    return Convert.ToInt32(inNumber1) * Convert.ToInt32(startNumber.Value);
+                    return (Convert.ToInt32(selection.Groups[1].Value) * Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
                 default: // case "/":
-                    return Convert.ToInt32(inNumber1) / Convert.ToInt32(startNumber.Value); 
+                   return (Convert.ToInt32(selection.Groups[1].Value) / Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
             }
         }
 
