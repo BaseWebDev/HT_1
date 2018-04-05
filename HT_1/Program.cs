@@ -29,18 +29,15 @@ namespace HT_1
                     Console.WriteLine("Выражение "+ phrase + " не возможно вычислить");
                 }
             }
-            string phrase1 =  @"1+2+3+4+5*6+1";
+            string phrase1 =  @"1+2+3+4+6/6+1";
             Console.WriteLine(phrase1+"="+SimpleParse(phrase1));
-
-            // Посимвольный ввод 
-            /*  
-              char inChar;
-              string inStr="";
-              while ((inChar = Convert.ToChar(Console.Read())) != '=') {  // Ввод строки
-                  inStr += inChar;
-              }
-            */
+            
         }
+        /// <summary>
+        /// Рекурсия с определением сложения и вычитания
+        /// </summary>
+        /// <param name="inPhrase">Входная строка выражения</param>
+        /// <returns></returns>
         private static int SimpleParse(string inPhrase) {
             Match endNumber = Regex.Match(inPhrase, @"^(\d+)$", RegexOptions.IgnoreCase);  //Если это последнее число в строке
             if (endNumber.Success) { // Удачно 
@@ -55,24 +52,17 @@ namespace HT_1
                     return Convert.ToInt32(startNumber.Value) - SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
                 default:
                     return SimpleParse(MultiOrDivision(inPhrase));
-
-                    /*case "*":
-                        return Convert.ToInt32(startNumber.Value) * SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
-                    case "/":
-                        return Convert.ToInt32(startNumber.Value) / SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));*/
             }
-          //  return 0;
         }
         /// <summary>
         /// Преобразование умножения в сложение
+        /// возращаем в строке произведение или частное
         /// </summary>
         /// <param name="inSubPhrase">входная подстрока</param>
         /// <returns></returns>
         private static string MultiOrDivision(string inSubPhrase) {
             string pattern = @"(\d+)([\*\/])(\d+)";
-           //  Match match in Regex.Matches(inSubPhrase, pattern, RegexOptions.IgnoreCase)
             Match selection = Regex.Match(inSubPhrase, pattern, RegexOptions.IgnoreCase);  //Берем первое число в строке @"\d+"
-       //     Match startOperator = Regex.Match(inSubPhrase, @"[\+\-\*\/]", RegexOptions.IgnoreCase);  //Берем первый оператор в строке
             switch (selection.Groups[2].Value) {
                 case "*":
                     return (Convert.ToInt32(selection.Groups[1].Value) * Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
