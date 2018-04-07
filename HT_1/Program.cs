@@ -33,11 +33,14 @@ namespace HT_1
             }
             string pattern = @"(\-*\d+)([\+\-\*\/])";
             Match selection = Regex.Match(inPhrase,pattern,RegexOptions.IgnoreCase);
-            switch (selection.Groups[2].Value) {
+            string selectionAll = selection.Groups[0].Value;
+            string term = selection.Groups[1].Value;
+            string operatorSumDiff = selection.Groups[2].Value;
+            switch (operatorSumDiff) {
                 case "+":
-                    return Convert.ToInt32(selection.Groups[1].Value) + SimpleParse(inPhrase.Substring(selection.Groups[0].Value.Length));
+                    return Convert.ToInt32(term) + SimpleParse(inPhrase.Substring(selectionAll.Length));
                 case "-":
-                    return Convert.ToInt32(selection.Groups[1].Value) - SimpleParse(inPhrase.Substring(selection.Groups[0].Value.Length));
+                    return Convert.ToInt32(term) - SimpleParse(inPhrase.Substring(selectionAll.Length));
                 case "*":
                     return SimpleParse(MultiOrDivision(inPhrase));
                 case "/":
@@ -55,11 +58,15 @@ namespace HT_1
         private static string MultiOrDivision(string inSubPhrase) {
             string pattern = @"(\-*\d+)([\*\/])(\-*\d+)";
             Match selection = Regex.Match(inSubPhrase, pattern, RegexOptions.IgnoreCase);
-            switch (selection.Groups[2].Value) {
+            string selectionAll = selection.Groups[0].Value;
+            string termFirst = selection.Groups[1].Value;
+            string operatorMultDiv = selection.Groups[2].Value;
+            string termSecond = selection.Groups[1].Value;
+            switch (operatorMultDiv) {
                 case "*":
-                    return (Convert.ToInt32(selection.Groups[1].Value) * Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
+                    return (Convert.ToInt32(termFirst) * Convert.ToInt32(termSecond)).ToString() + inSubPhrase.Substring(selectionAll.Length);
                 case "/":
-                    return (Convert.ToInt32(selection.Groups[1].Value) / Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
+                    return (Convert.ToInt32(termFirst) / Convert.ToInt32(termSecond)).ToString() + inSubPhrase.Substring(selectionAll.Length);
             }
             Console.WriteLine("Error");
             return ""; // Если нет ошибок, то этот код недостижим
