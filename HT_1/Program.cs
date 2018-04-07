@@ -38,9 +38,13 @@ namespace HT_1
                     return Convert.ToInt32(selection.Groups[1].Value) + SimpleParse(inPhrase.Substring(selection.Groups[0].Value.Length));
                 case "-":
                     return Convert.ToInt32(selection.Groups[1].Value) - SimpleParse(inPhrase.Substring(selection.Groups[0].Value.Length));
-                default:
+                case "*":
+                    return SimpleParse(MultiOrDivision(inPhrase));
+                case "/":
                     return SimpleParse(MultiOrDivision(inPhrase));
             }
+            Console.WriteLine("Error");
+            return 0;   // Если нет ошибок, то этот код недостижим
         }
         /// <summary>
         /// Преобразование умножения в сложение
@@ -54,9 +58,11 @@ namespace HT_1
             switch (selection.Groups[2].Value) {
                 case "*":
                     return (Convert.ToInt32(selection.Groups[1].Value) * Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
-                default:
-                   return (Convert.ToInt32(selection.Groups[1].Value) / Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
+                case "/":
+                    return (Convert.ToInt32(selection.Groups[1].Value) / Convert.ToInt32(selection.Groups[3].Value)).ToString() + inSubPhrase.Substring(selection.Groups[0].Value.Length);
             }
+            Console.WriteLine("Error");
+            return ""; // Если нет ошибок, то этот код недостижим
         }
         /// <summary>
         /// Решение с урока
