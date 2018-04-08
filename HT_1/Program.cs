@@ -18,8 +18,15 @@ namespace HT_1
         {  
             Console.WriteLine("Введите выражение для парсинга:");
             string phrase = Console.ReadLine();
+            var t1 = DateTime.Now;
             Console.WriteLine(phrase +"="+ SimpleParse(phrase));
+            var t2 = DateTime.Now;
             Console.WriteLine(phrase + "=" +Parse(phrase));
+            var t3 = DateTime.Now;
+            TimeSpan Reg = t2 - t1;
+            TimeSpan Reg2 = t3 - t2;
+            Console.WriteLine("С регулярками: " + (Reg.TotalMilliseconds)+ " сек");
+            Console.WriteLine("Без регулярок: " + (Reg2.TotalMilliseconds) + " сек");
         }
         /// <summary>
         /// Рекурсия с определением сложения и вычитания
