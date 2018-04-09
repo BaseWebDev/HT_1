@@ -17,80 +17,27 @@ namespace HT_1
         static void Main(string[] args)
         {
             Console.WriteLine("Введите выражение для парсинга:");
-            string phrase = Console.ReadLine();
-            if (phrase.Length > 0) {
-                var t1 = DateTime.Now;
-                Console.WriteLine(phrase + "=" + SimpleParse(phrase));
-                var t2 = DateTime.Now;
-                Console.WriteLine(phrase + "=" + Parse(phrase));
-                var t3 = DateTime.Now;
-                TimeSpan Reg = t2 - t1;
-                TimeSpan Reg2 = t3 - t2;
-                Console.WriteLine("С регулярками: " + (Reg.TotalMilliseconds) + " сек");
-                Console.WriteLine("Без регулярок: " + (Reg2.TotalMilliseconds) + " сек");
+            string phraseIn = Console.ReadLine();
+            if (phraseIn.Length > 0) {
+                var timeStart = DateTime.Now;
+                Console.WriteLine(phraseIn + "=" + SimpleParse(phraseIn));
+                var timeEnd = DateTime.Now;
+                TimeSpan diffTime = timeEnd - timeStart;
+                Console.WriteLine("Выражение проанализировано и вычислено за: " + (diffTime.TotalMilliseconds) + " милисекунд");
             } else {  // Если ничего не ввели, то используем тестовые примеры
-                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2*3!-3" };
-                foreach (string key in phrases) {
-                    Console.WriteLine(key + "=" + Parse(key));
+                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2*3!-3", @"10!*10-3" };
+                foreach (string phrase in phrases) {
+                    var timeStart = DateTime.Now;
+                    Console.WriteLine(phrase + "=" + SimpleParse(phrase)+" за время: "+(DateTime.Now-timeStart).TotalMilliseconds + " милисекунд");
                 }
             }
-        }
-        /// <summary>
-        /// Рекурсия с определением сложения и вычитания
-        /// </summary>
-        /// <param name="inPhrase">Входная строка выражения</param>
-        /// <returns></returns>
-        private static int SimpleParse(string inPhrase) {
-            Match endNumber = Regex.Match(inPhrase, @"^(\d+)$", RegexOptions.IgnoreCase);  //Если это последнее число в строке
-            if (endNumber.Success) { // Удачно 
-                return Convert.ToInt32(endNumber.Value);
-            }
-            string pattern = @"(\-*\d+)([\+\-\*\/])";
-            Match selection = Regex.Match(inPhrase,pattern,RegexOptions.IgnoreCase);
-            string selectionAll = selection.Groups[0].Value;
-            string term = selection.Groups[1].Value;
-            string operatorSumDiff = selection.Groups[2].Value;
-            switch (operatorSumDiff) {
-                case "+":
-                    return Convert.ToInt32(term) + SimpleParse(inPhrase.Substring(selectionAll.Length));
-                case "-":
-                    return Convert.ToInt32(term) - SimpleParse(inPhrase.Substring(selectionAll.Length));
-                case "*":
-                    return SimpleParse(MultiOrDivision(inPhrase));
-                case "/":
-                    return SimpleParse(MultiOrDivision(inPhrase));
-            }
-            Console.WriteLine("Error");
-            return 0;   // Если нет ошибок, то этот код недостижим
-        }
-        /// <summary>
-        /// Преобразование умножения в сложение
-        /// возращаем в строке произведение или частное
-        /// </summary>
-        /// <param name="inSubPhrase">входная подстрока</param>
-        /// <returns></returns>
-        private static string MultiOrDivision(string inSubPhrase) {
-            string pattern = @"(\-*\d+)([\*\/])(\-*\d+)";
-            Match selection = Regex.Match(inSubPhrase, pattern, RegexOptions.IgnoreCase);
-            string selectionAll = selection.Groups[0].Value;
-            string termFirst = selection.Groups[1].Value;
-            string operatorMultDiv = selection.Groups[2].Value;
-            string termSecond = selection.Groups[1].Value;
-            switch (operatorMultDiv) {
-                case "*":
-                    return (Convert.ToInt32(termFirst) * Convert.ToInt32(termSecond)).ToString() + inSubPhrase.Substring(selectionAll.Length);
-                case "/":
-                    return (Convert.ToInt32(termFirst) / Convert.ToInt32(termSecond)).ToString() + inSubPhrase.Substring(selectionAll.Length);
-            }
-            Console.WriteLine("Error");
-            return ""; // Если нет ошибок, то этот код недостижим
         }
         /// <summary>
         /// Синтактический разбор выражения
         /// </summary>
         /// <param name="s">Парсируемая строка</param>
         /// <returns></returns>
-        static int Parse(string s) {
+        static int SimpleParse(string s) {
             int index = 0;
             int num = MultOrDiv(s, ref index);
             while (index < s.Length) {
