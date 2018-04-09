@@ -15,18 +15,27 @@ namespace HT_1
     {
         
         static void Main(string[] args)
-        {  
+        {
             Console.WriteLine("Введите выражение для парсинга:");
             string phrase = Console.ReadLine();
-            var t1 = DateTime.Now;
-            Console.WriteLine(phrase +"="+ SimpleParse(phrase));
-            var t2 = DateTime.Now;
-            Console.WriteLine(phrase + "=" +Parse(phrase));
-            var t3 = DateTime.Now;
-            TimeSpan Reg = t2 - t1;
-            TimeSpan Reg2 = t3 - t2;
-            Console.WriteLine("С регулярками: " + (Reg.TotalMilliseconds)+ " сек");
-            Console.WriteLine("Без регулярок: " + (Reg2.TotalMilliseconds) + " сек");
+            if (phrase.Length > 0) {
+                var t1 = DateTime.Now;
+                Console.WriteLine(phrase + "=" + SimpleParse(phrase));
+                var t2 = DateTime.Now;
+                Console.WriteLine(phrase + "=" + Parse(phrase));
+                var t3 = DateTime.Now;
+                TimeSpan Reg = t2 - t1;
+                TimeSpan Reg2 = t3 - t2;
+                Console.WriteLine("С регулярками: " + (Reg.TotalMilliseconds) + " сек");
+                Console.WriteLine("Без регулярок: " + (Reg2.TotalMilliseconds) + " сек");
+            } else {  // Если ничего не ввели, то используем тестовые примеры
+                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3" };
+                foreach (string key in phrases) {
+                    Console.WriteLine(key + "=" + Parse(key));
+                }
+            }
+
+
         }
         /// <summary>
         /// Рекурсия с определением сложения и вычитания
@@ -85,29 +94,34 @@ namespace HT_1
         /// <returns></returns>
         static int Parse(string s) {
             int index = 0;
-            int num = Num(s, ref index);
+            int num = MultOrDiv(s, ref index);
             while (index < s.Length) {
                 if (s[index] == '+') {
                     index++;
-                    int indNew = index;
-                    int b = Num(s, ref index);
-                    if ((index < s.Length)&&(s[index] == '*' || (s[index] == '/')) ) {
-                        index = indNew;
-                        num += MulDiv(s, ref index);
-                    } else {
-                        num += b;
-                    }
+                    int b = MultOrDiv(s, ref index);
+                    num += b;          
                 } else if (s[index] == '-') {
                     index++;
-                    int indNew = index;
-                    int b = Num(s, ref index);
-                    if ((index < s.Length) && (s[index] == '*' || (s[index] == '/'))) {
-                        index = indNew;
-                        num -= MulDiv(s, ref index);
-                    } else {
-                        num -= b;
-                    }
-                } else if (s[index] == '*') {
+                    int b = MultOrDiv(s, ref index);
+                    num -= b;
+                } else {
+                    Console.WriteLine("Error");
+                    return 0;
+                }
+            }
+
+            return num;
+        }
+        /// <summary>
+        /// Произведение и деление
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <param name="index">Индекс смещения в строке</param>
+        /// <returns></returns>
+        static int MultOrDiv(string s, ref int index) {
+            int num = Num(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '*') {
                     index++;
                     int b = Num(s, ref index);
                     num *= b;
@@ -115,9 +129,8 @@ namespace HT_1
                     index++;
                     int b = Num(s, ref index);
                     num /= b;
-                } else {
-                    Console.WriteLine("Error");
-                    return 0;
+                } else {  // Если + или -, то
+                    return num;
                 }
             }
 
@@ -137,27 +150,6 @@ namespace HT_1
 
             return int.Parse(buff);//01
         }
-        /// <summary>
-        /// Для умножения и деления
-        /// </summary>
-        /// <returns></returns>
-        static int MulDiv(string s, ref int i) {
-             int inum = Num(s, ref i);
-
-            while ( i < s.Length && (s[i]=='*'|| s[i] == '/')) {
-                if (s[i] == '*') {
-                    i++;
-                    int ib = Num(s, ref i);
-                    inum *= ib;
-                } else if (s[i] == '/') {
-                    i++;
-                    int ib = Num(s, ref i);
-                    inum /= ib;
-                }
-            }
-            return inum;
-        }
-
     }
 
 }
