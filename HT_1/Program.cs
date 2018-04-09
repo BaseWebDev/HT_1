@@ -29,13 +29,11 @@ namespace HT_1
                 Console.WriteLine("С регулярками: " + (Reg.TotalMilliseconds) + " сек");
                 Console.WriteLine("Без регулярок: " + (Reg2.TotalMilliseconds) + " сек");
             } else {  // Если ничего не ввели, то используем тестовые примеры
-                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3" };
+                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2*3!-3" };
                 foreach (string key in phrases) {
                     Console.WriteLine(key + "=" + Parse(key));
                 }
             }
-
-
         }
         /// <summary>
         /// Рекурсия с определением сложения и вычитания
@@ -88,7 +86,7 @@ namespace HT_1
             return ""; // Если нет ошибок, то этот код недостижим
         }
         /// <summary>
-        /// Решение с урока
+        /// Синтактический разбор выражения
         /// </summary>
         /// <param name="s">Парсируемая строка</param>
         /// <returns></returns>
@@ -109,8 +107,36 @@ namespace HT_1
                     return 0;
                 }
             }
-
             return num;
+        }
+        /// <summary>
+        /// Синтактический разбор выражения
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <returns></returns>
+        static int ParseFact(string s, ref int index) {
+            int num = Num(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '!') {
+                    index++;
+                    num = Fact(num); ;
+                }  else {
+                   return num;
+                }
+            }
+            return num;
+        }
+        /// <summary>
+        /// Факториал
+        /// </summary>
+        /// <param name="num">кол-во итераций</param>
+        /// <returns></returns>
+        static int Fact(int num) {
+            if (num == 1) {
+                return 1;
+            }
+            return num*Fact(num - 1);
+           
         }
         /// <summary>
         /// Произведение и деление
@@ -119,15 +145,15 @@ namespace HT_1
         /// <param name="index">Индекс смещения в строке</param>
         /// <returns></returns>
         static int MultOrDiv(string s, ref int index) {
-            int num = Num(s, ref index);
+            int num = ParseFact(s, ref index);
             while (index < s.Length) {
                 if (s[index] == '*') {
                     index++;
-                    int b = Num(s, ref index);
+                    int b = ParseFact(s, ref index);
                     num *= b;
                 } else if (s[index] == '/') {
                     index++;
-                    int b = Num(s, ref index);
+                    int b = ParseFact(s, ref index);
                     num /= b;
                 } else {  // Если + или -, то
                     return num;
@@ -147,7 +173,6 @@ namespace HT_1
             for (; i < s.Length && char.IsDigit(s[i]); i++) {
                 buff += s[i];
             }
-
             return int.Parse(buff);//01
         }
     }
