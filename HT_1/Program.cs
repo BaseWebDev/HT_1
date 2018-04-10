@@ -15,64 +15,114 @@ namespace HT_1
     {
         
         static void Main(string[] args)
-        {  
-            string[] phrases= new string[] { @"-1+2=3", @"2+2*2=6", @"1-6/2m=-2" };
-            string pattern = @"^(\-*\d+)([\+\-\*\/])(\d+)([\+\-\*\/])*(\d+)*=(\-*\d+)$"; //  @"^(\-*\d+)" - с начала строки, (\-*\d+)$ - в конце строки 
-            foreach (string phrase in phrases) {
-                bool notMatch = true;
-                foreach (Match match in Regex.Matches(phrase, pattern, RegexOptions.IgnoreCase)) {
-                    notMatch = false;
-                    Console.WriteLine("Выражение " + phrase + " возможно вычислить");
-                   // Console.WriteLine(match.Value +" " + match.Groups[0].Value +" " + match.Groups[2].Value + " "+ match.Index);
+        {
+            Console.WriteLine("Введите выражение для парсинга:");
+            string phraseIn = Console.ReadLine();
+            if (phraseIn.Length > 0) {
+                var timeStart = DateTime.Now;
+                Console.WriteLine(phraseIn + "=" + SimpleParse(phraseIn));
+                var timeEnd = DateTime.Now;
+                TimeSpan diffTime = timeEnd - timeStart;
+                Console.WriteLine("Выражение проанализировано и вычислено за: " + (diffTime.TotalMilliseconds) + " милисекунд");
+            } else {  // Если ничего не ввели, то используем тестовые примеры
+                string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2*3!-3", @"10!-3" };
+                foreach (string phrase in phrases) {
+                    var timeStart = DateTime.Now;
+                    Console.WriteLine(phrase + "=" + SimpleParse(phrase)+" за время: "+(DateTime.Now-timeStart).TotalMilliseconds + " милисекунд");
                 }
-                if (notMatch) { // Если нет совпадений
-                    Console.WriteLine("Выражение "+ phrase + " не возможно вычислить");
+            }
+        }
+        /// <summary>
+        /// Синтактический разбор выражения
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <returns></returns>
+        static int SimpleParse(string s) {
+            int index = 0;
+            int num = MultOrDiv(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '+') {
+                    index++;
+                    int b = MultOrDiv(s, ref index);
+                    num += b;          
+                } else if (s[index] == '-') {
+                    index++;
+                    int b = MultOrDiv(s, ref index);
+                    num -= b;
+                } else {
+                    Console.WriteLine("Error");
+                    return 0;
                 }
             }
-            string phrase1 =  @"1+2+3+4+5+6";
-            Console.WriteLine(SimpleParse(phrase1));
-
-            Console.ReadKey();
-            // Посимвольный ввод 
-            /*  
-              char inChar;
-              string inStr="";
-              while ((inChar = Convert.ToChar(Console.Read())) != '=') {  // Ввод строки
-                  inStr += inChar;
-              }
-            */
+            return num;
         }
-        private static int SimpleParse(string inPhrase) {
-            Match endNumber = Regex.Match(inPhrase, @"^(\d+)$", RegexOptions.IgnoreCase);  //Если это последнее число в строке
-            if (endNumber.Success) { // Удачно 
-                return Convert.ToInt32(endNumber.Value);
-            } 
-            Match startNumber = Regex.Match(inPhrase, @"\d+", RegexOptions.IgnoreCase);  //Берем первое число в строке
-            Match startOperator = Regex.Match(inPhrase, @"[\+\-\*\/]", RegexOptions.IgnoreCase);  //Берем первый оператор в строке
-            switch (startOperator.Value) {
-                case "+":
-                    return Convert.ToInt32(startNumber.Value) + SimpleParse(inPhrase.Substring(startNumber.Value.Length+ startOperator.Value.Length));
-                case "-":
-                    return Convert.ToInt32(startNumber.Value) - SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
-                default:
-                    return Convert.ToInt32(startNumber.Value) - SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
-
-                    /*case "*":
-                        return Convert.ToInt32(startNumber.Value) * SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));
-                    case "/":
-                        return Convert.ToInt32(startNumber.Value) / SimpleParse(inPhrase.Substring(startNumber.Value.Length + startOperator.Value.Length));*/
+        /// <summary>
+        /// Синтактический разбор выражения
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <returns></returns>
+        static int ParseFact(string s, ref int index) {
+            int num = Num(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '!') {
+                    index++;
+                    num = Fact(num); ;
+                }  else {
+                   return num;
+                }
             }
-          //  return 0;
+            return num;
         }
-        private static int MultiParse(string inNumber1, string inOperator, string inSubPhrase) {
-            Match startNumber = Regex.Match(inSubPhrase, @"\d+", RegexOptions.IgnoreCase);  //Берем первое число в строке
-            switch (inOperator) {
-                case "*":
-                    return Convert.ToInt32(inNumber1) * Convert.ToInt32(startNumber.Value);
-                default: // case "/":
-                    return Convert.ToInt32(inNumber1) / Convert.ToInt32(startNumber.Value); 
+        /// <summary>
+        /// Факториал
+        /// </summary>
+        /// <param name="num">кол-во итераций</param>
+        /// <returns></returns>
+        static int Fact(int num) {
+            if (num == 1) {
+                return 1;
             }
+            return num*Fact(num - 1);
+           
         }
+        /// <summary>
+        /// Произведение и деление
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <param name="index">Индекс смещения в строке</param>
+        /// <returns></returns>
+        static int MultOrDiv(string s, ref int index) {
+            int num = ParseFact(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '*') {
+                    index++;
+                    int b = ParseFact(s, ref index);
+                    num *= b;
+                } else if (s[index] == '/') {
+                    index++;
+                    int b = ParseFact(s, ref index);
+                    num /= b;
+                } else {  // Если + или -, то
+                    return num;
+                }
+            }
 
+            return num;
+        }
+        /// <summary>
+        /// Разбор числа
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        static int Num(string s, ref int i) {
+            string buff = "0";
+            for (; i < s.Length && char.IsDigit(s[i]); i++) {
+                buff += s[i];
+            }
+            return int.Parse(buff);//01
+        }
     }
+
 }
+
