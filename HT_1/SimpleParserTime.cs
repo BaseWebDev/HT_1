@@ -43,7 +43,7 @@ namespace HT_1
         /// </summary>
         /// <param name="inPhrase">Входное выражение</param>
         public void Add(string inPhrase) {
-            base.Phrase = inPhrase;
+            Phrase = inPhrase;
         }
         
     }

@@ -41,7 +41,7 @@ namespace HT_1
                 }
             }
             Console.WriteLine();
-            Console.WriteLine("\tИспользуем класс SimpleParserTime");
+            Console.WriteLine("\tИспользуем класс-наследник SimpleParserTime");
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
             SimpleParserTime parserTime = new SimpleParserTime(Console.ReadLine());  // Вводим с консоли выражение для парсинга, используем конструктор для ввода выражения
             if (parserTime.Phrase.Length > 0) {  // Что-то ввели

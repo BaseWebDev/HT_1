@@ -13,7 +13,7 @@ namespace HT_1
                 return phrase;
             }
             set {
-                value = phrase;
+                phrase = value;
                 curIndex = 0;
                 result = 0;
                 mesError = String.Empty;
