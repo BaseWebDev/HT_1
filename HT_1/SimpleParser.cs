@@ -9,14 +9,38 @@ namespace HT_1
     class SimpleParser  // internal
     {
         private string phrase; // парсируемое выражение
-        private int index;   // текущий индекс
+        private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
+        private List <string> mesError;  // ошибки парсирования
+        public string Phrase { get; set; }
+        public int CurIndex { get; }    
+        public int Result { get; }
+        public List<string> MesErorr { get; }
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
+        public SimpleParser() {
+            Phrase = String.Empty;
+            CurIndex = 0;
+            Result = 0;
+            MesErorr = new List<string>();
+        }
+        /// <summary>
+        /// Конструктор с входной строкой
+        /// </summary>
+        /// <param name="inPhrase">Парсируемая строка</param>
+        public SimpleParser(string inPhrase) {
+            Phrase = inPhrase;
+            CurIndex = 0;
+            Result = 0;
+            MesErorr = new List<string>();
+        }
         /// <summary>
         /// Синтактический разбор выражения
         /// </summary>
         /// <param name="s">Парсируемая строка</param>
         /// <returns></returns>
-        static int SimpleParse(string s) {
+        static int Parse(string s) {
             int index = 0;
             int num = MultOrDiv(s, ref index);
             while (index < s.Length) {
