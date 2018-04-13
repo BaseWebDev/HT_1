@@ -17,7 +17,7 @@ namespace HT_1
             SimpleParser parser = new SimpleParser(Console.ReadLine());  // Вводим с консоли выражение для парсинга, используем конструктор для ввода выражения
             if (parser.Phrase.Length > 0) {  // Что-то ввели
                 var timeStart = DateTime.Now;
-                if (parser.TryParse()) {
+                if (parser.Try()) {
                     Console.WriteLine(parser.Phrase + "=" + parser.Result);
                     var timeEnd = DateTime.Now;
                     TimeSpan diffTime = timeEnd - timeStart;
@@ -30,7 +30,7 @@ namespace HT_1
                 SimpleParser parserTest = new SimpleParser();  // Используем конструктор по умолчанию
                 foreach (string phrase in phrases) {
                     var timeStart = DateTime.Now;                
-                    if (parserTest.TryParse(phrase)) {
+                    if (parserTest.Try(phrase)) {
                         Console.WriteLine(phrase + "=" + parserTest.Result + " за время: " + (DateTime.Now - timeStart).TotalMilliseconds + " милисекунд");
                     } else {
                         Console.WriteLine("Ошибка: " + parserTest.MesError + " В выражении: " + parserTest.Phrase + ", в " + parserTest.CurIndex + " символе c 0");

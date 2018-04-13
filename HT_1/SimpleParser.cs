@@ -38,19 +38,19 @@ namespace HT_1
         /// <summary>
         /// Метод объекта, true - если нет ошибок
         /// </summary>
-        public bool TryParse() {
+        public bool Try() {
             result = Parse(phrase, ref curIndex,ref mesError);
             return mesError == String.Empty;
         }
         /// <summary>
         /// Метод объекта, true - если нет ошибок
         /// </summary>
-        public bool TryParse(string inPhrase) {
+        public bool Try(string inPhrase) {
             phrase = inPhrase;
             curIndex = 0;
             result = 0;
             mesError = String.Empty;
-            return TryParse();
+            return Try();
         }
 
         /// <summary>
