@@ -11,36 +11,79 @@ namespace HT_1
         private string phrase; // парсируемое выражение
         private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
-        private List <string> mesError;  // ошибки парсирования
-        public string Phrase { get; set; }
-        public int CurIndex { get; }    
-        public int Result { get; }
-        public List<string> MesErorr { get; }
+        private string mesError;  // ошибки парсирования
+        public string Phrase { get { return phrase; } set { value=phrase; } }
+        public int CurIndex { get { return curIndex; } }    
+        public int Result { get {return result; } }
+        public string MesError { get { return mesError; } }
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
         public SimpleParser() {
-            Phrase = String.Empty;
-            CurIndex = 0;
-            Result = 0;
-            MesErorr = new List<string>();
+            phrase = String.Empty;
+            curIndex = 0;
+            result = 0;
+            mesError = String.Empty;
         }
         /// <summary>
         /// Конструктор с входной строкой
         /// </summary>
         /// <param name="inPhrase">Парсируемая строка</param>
         public SimpleParser(string inPhrase) {
-            Phrase = inPhrase;
-            CurIndex = 0;
-            Result = 0;
-            MesErorr = new List<string>();
+            phrase = inPhrase;
+            curIndex = 0;
+            result = 0;
+            mesError = String.Empty;
+        }
+        /// <summary>
+        /// Метод объекта, true - если нет ошибок
+        /// </summary>
+        public bool TryParse() {
+            result = Parse(phrase, ref curIndex,ref mesError);
+            return mesError == String.Empty;
+        }
+        /// <summary>
+        /// Метод объекта, true - если нет ошибок
+        /// </summary>
+        public bool TryParse(string inPhrase) {
+            phrase = inPhrase;
+            curIndex = 0;
+            result = 0;
+            mesError = String.Empty;
+            return TryParse();
+        }
+
+        /// <summary>
+        /// Синтактический разбор выражения
+        /// </summary>
+        /// <param name="s">Парсируемая строка</param>
+        /// <returns></returns>
+        public static int Parse(string s, ref int index,ref string mesError) {
+            index = 0;
+            int num = MultOrDiv(s, ref index);
+            while (index < s.Length) {
+                if (s[index] == '+') {
+                    index++;
+                    int b = MultOrDiv(s, ref index);
+                    num += b;
+                } else if (s[index] == '-') {
+                    index++;
+                    int b = MultOrDiv(s, ref index);
+                    num -= b;
+                } else {
+                    mesError = "Оператор или цифра не определена!";
+                    // Console.WriteLine("Error");
+                    return 0;
+                }
+            }
+            return num;
         }
         /// <summary>
         /// Синтактический разбор выражения
         /// </summary>
         /// <param name="s">Парсируемая строка</param>
         /// <returns></returns>
-        static int Parse(string s) {
+        public static int Parse(string s) {
             int index = 0;
             int num = MultOrDiv(s, ref index);
             while (index < s.Length) {
@@ -64,7 +107,7 @@ namespace HT_1
         /// </summary>
         /// <param name="s">Парсируемая строка</param>
         /// <returns></returns>
-        static int ParseFact(string s, ref int index) {
+        public static int ParseFact(string s, ref int index) {
             int num = Num(s, ref index);
             while (index < s.Length) {
                 if (s[index] == '!') {
@@ -81,7 +124,7 @@ namespace HT_1
         /// </summary>
         /// <param name="num">кол-во итераций</param>
         /// <returns></returns>
-        static int Fact(int num) {
+        public static int Fact(int num) {
             if (num == 1) {
                 return 1;
             }
@@ -94,7 +137,7 @@ namespace HT_1
         /// <param name="s">Парсируемая строка</param>
         /// <param name="index">Индекс смещения в строке</param>
         /// <returns></returns>
-        static int MultOrDiv(string s, ref int index) {
+        public static int MultOrDiv(string s, ref int index) {
             int num = ParseFact(s, ref index);
             while (index < s.Length) {
                 if (s[index] == '*') {
@@ -118,7 +161,7 @@ namespace HT_1
         /// <param name="s"></param>
         /// <param name="i"></param>
         /// <returns></returns>
-        static int Num(string s, ref int i) {
+        public static int Num(string s, ref int i) {
             string buff = "0";
             for (; i < s.Length && char.IsDigit(s[i]); i++) {
                 buff += s[i];
