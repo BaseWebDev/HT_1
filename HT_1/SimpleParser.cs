@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace HT_1
 {
@@ -12,7 +8,17 @@ namespace HT_1
         private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
         private string mesError;  // ошибки парсирования
-        public string Phrase { get { return phrase; } set { value=phrase; } }
+        public string Phrase {
+            get {
+                return phrase;
+            }
+            set {
+                value = phrase;
+                curIndex = 0;
+                result = 0;
+                mesError = String.Empty;
+            }
+        }
         public int CurIndex { get { return curIndex; } }    
         public int Result { get {return result; } }
         public string MesError { get { return mesError; } }
@@ -36,14 +42,14 @@ namespace HT_1
             mesError = String.Empty;
         }
         /// <summary>
-        /// Метод объекта, true - если нет ошибок
+        /// Вычисление рузльтата, true - если нет ошибок
         /// </summary>
         public bool Try() {
             result = Parse(phrase, ref curIndex,ref mesError);
             return mesError == String.Empty;
         }
         /// <summary>
-        /// Метод объекта, true - если нет ошибок
+        /// Вычисление рузльтата, true - если нет ошибок
         /// </summary>
         public bool Try(string inPhrase) {
             phrase = inPhrase;
