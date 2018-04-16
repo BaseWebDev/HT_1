@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HT_1
-{
+namespace HT_1 {
     /// <summary>
     /// Пробуем наследование
     /// </summary>
-    class SimpleParserTime:SimpleParser
-    {
-        private DateTime timeStart;  
+    class SimpleParserTime : SimpleParser {
+        private DateTime timeStart;
         private DateTime timeEnd;
-        private List<string> list;
+        private List<string> phrases;
         /// <summary>
         /// Время выполнения парсинга
         /// </summary>
@@ -24,20 +22,26 @@ namespace HT_1
         /// </summary>
         /// <param name="inPhrase">входная строка</param>
         public SimpleParserTime(string inPhrase) : base(inPhrase) {
-            list = new List<string> ();
+            phrases = new List<string> ();
             Add(inPhrase);
         }
         /// <summary>
         /// Отображение результата или ошибки
         /// </summary>
-        public void ShowResult() {
-            foreach (string phrase in list) {
+        public override void ShowResult() {
+            foreach (string phrase in phrases) {
                 timeStart = DateTime.Now;
                 if (Try(phrase)) {
                     timeEnd = DateTime.Now;
                     Console.WriteLine(Phrase + "=" + Result + ", вычислено за " + DiffTime.ToString() + " милисекунд");
                 } else {
-                    Console.WriteLine("Ошибка: " + MesError + " В выражении: " + Phrase + ", в " + CurIndex + " символе c 0");
+                    ConsoleColor curBack = Console.BackgroundColor;
+                    Console.Write("В выражении: " + Phrase.Substring(0, CurIndex));
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.Write(Phrase.Substring(CurIndex, 1));
+                    Console.BackgroundColor = curBack;
+                    Console.Write(Phrase.Substring(CurIndex+1));
+                    Console.WriteLine(" Ошибка: " + MesError);
                 }
             }
         }
@@ -46,7 +50,7 @@ namespace HT_1
         /// </summary>
         /// <param name="inPhrase">Входное выражение</param>
         public void Add(string inPhrase) {
-             if (inPhrase!=String.Empty)list.Add(inPhrase);
+             if (inPhrase!=String.Empty)phrases.Add(inPhrase);
         }     
     }
 }

@@ -56,6 +56,16 @@ namespace HT_1
             return Try();
         }
         /// <summary>
+        /// Отображение результата или ошибки
+        /// </summary>
+        public virtual void ShowResult() {
+           if (!errSt) {
+                Console.Write(phrase + "=" + result);
+           } else {
+                Console.WriteLine("Ошибка: " + mesError + " В выражении: " + phrase + ", в " + curIndex + " символе c 0");
+           }            
+        }
+        /// <summary>
         /// Синтактический разбор выражения
         /// </summary>
         /// <returns></returns>
