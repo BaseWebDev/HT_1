@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace HT_1
 {
@@ -13,6 +10,7 @@ namespace HT_1
     {
         private DateTime timeStart;  
         private DateTime timeEnd;
+        private List<string> list;
         /// <summary>
         /// Время выполнения парсинга
         /// </summary>
@@ -20,31 +18,35 @@ namespace HT_1
         /// <summary>
         /// При вызове конструктора по умолчанию вызываем его из базового класса
         /// </summary>
-        public SimpleParserTime():base () {}
+        public SimpleParserTime():this (String.Empty) {}
         /// <summary>
         /// При вызове конструктора с параметром, вызывается базовый с параметром
         /// </summary>
         /// <param name="inPhrase">входная строка</param>
-        public SimpleParserTime(string inPhrase) : base(inPhrase) { }
+        public SimpleParserTime(string inPhrase) : base(inPhrase) {
+            list = new List<string> ();
+            Add(inPhrase);
+        }
         /// <summary>
         /// Отображение результата или ошибки
         /// </summary>
         public void ShowResult() {
-            timeStart = DateTime.Now;
-            if (Try()) {
-                timeEnd = DateTime.Now;
-                Console.WriteLine(Phrase + "=" + Result + ", вычислено за " + DiffTime.ToString() + " милисекунд");
-            } else {
-                Console.WriteLine("Ошибка: " + MesError + " В выражении: " + Phrase + ", в " + CurIndex + " символе c 0");
-            }         
+            foreach (string phrase in list) {
+                timeStart = DateTime.Now;
+                if (Try(phrase)) {
+                    timeEnd = DateTime.Now;
+                    Console.WriteLine(Phrase + "=" + Result + ", вычислено за " + DiffTime.ToString() + " милисекунд");
+                } else {
+                    Console.WriteLine("Ошибка: " + MesError + " В выражении: " + Phrase + ", в " + CurIndex + " символе c 0");
+                }
+            }
         }
         /// <summary>
         /// Добавление выражение в анализ
         /// </summary>
         /// <param name="inPhrase">Входное выражение</param>
         public void Add(string inPhrase) {
-            Phrase = inPhrase;
-        }
-        
+             if (inPhrase!=String.Empty)list.Add(inPhrase);
+        }     
     }
 }

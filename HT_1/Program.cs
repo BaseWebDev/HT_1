@@ -50,8 +50,8 @@ namespace HT_1
                 SimpleParserTime parserTimeTest = new SimpleParserTime();  // Используем конструктор по умолчанию
                 foreach (string phrase in phrases) {
                     parserTimeTest.Add(phrase);
-                    parserTimeTest.ShowResult();
                 }
+                parserTimeTest.ShowResult();
             }
         }
         
