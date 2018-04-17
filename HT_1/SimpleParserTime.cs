@@ -8,11 +8,15 @@ namespace HT_1 {
     class SimpleParserTime : SimpleParser {
         private DateTime timeStart;
         private DateTime timeEnd;
+        private int countOpOk;
+        private int countOpEr;
         private List<string> phrases;
         /// <summary>
         /// Время выполнения парсинга
         /// </summary>
         public double DiffTime { get { return (timeEnd - timeStart).TotalMilliseconds; } }
+        public int CountOpOk { get { return countOpOk; } }
+        public int CountOpEr { get { return countOpEr; } }
         /// <summary>
         /// При вызове конструктора по умолчанию вызываем его из базового класса
         /// </summary>
@@ -34,6 +38,7 @@ namespace HT_1 {
                 if (Try(phrase)) {
                     timeEnd = DateTime.Now;
                     Console.WriteLine(Phrase + "=" + Result + ", вычислено за " + DiffTime.ToString() + " милисекунд");
+                    ++countOpOk;
                 } else {
                     ConsoleColor curBack = Console.BackgroundColor;
                     Console.Write("В выражении: " + Phrase.Substring(0, CurIndex));
@@ -42,6 +47,7 @@ namespace HT_1 {
                     Console.BackgroundColor = curBack;
                     Console.Write(Phrase.Substring(CurIndex+1));
                     Console.WriteLine(" Ошибка: " + MesError);
+                    ++countOpEr;
                 }
             }
         }

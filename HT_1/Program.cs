@@ -54,7 +54,8 @@ namespace HT_1
                 foreach (string phrase in phrases) {
                     parserTimeTest.Add(phrase);
                 }
-                parserTimeTest.ShowResult();            
+                parserTimeTest.ShowResult();
+                Console.WriteLine("Выполнено удачных: "+parserTimeTest.CountOpOk + " и " +parserTimeTest.CountOpEr +" с ошибкой");
             }
         }
         
