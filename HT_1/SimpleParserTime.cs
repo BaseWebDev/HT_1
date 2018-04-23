@@ -32,7 +32,7 @@ namespace HT_1 {
         /// <summary>
         /// Отображение результата или ошибки
         /// </summary>
-        public override void ShowResult() {
+        public virtual void ShowResult() {
             foreach (string phrase in phrases) {
                 timeStart = DateTime.Now;
                 if (Try(phrase)) {

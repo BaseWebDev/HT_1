@@ -58,11 +58,11 @@ namespace HT_1
         /// <summary>
         /// Отображение результата или ошибки
         /// </summary>
-        public virtual void ShowResult() {
+        public override string ToString() {
            if (!errSt) {
-                Console.Write(phrase + "=" + result);
+                return phrase + "=" + result;
            } else {
-                Console.WriteLine("Ошибка: " + mesError + " В выражении: " + phrase + ", в " + curIndex + " символе c 0");
+                return "Ошибка: " + mesError + " В выражении: " + phrase + ", в " + curIndex + " символе c 0";
            }            
         }
         /// <summary>

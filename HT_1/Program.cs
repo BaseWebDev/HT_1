@@ -22,12 +22,12 @@ namespace HT_1
             if (parser.Phrase.Length > 0) {  // Что-то ввели
                 var timeStart = DateTime.Now;
                 if (parser.Try()) {
-                    parser.ShowResult();
+                    Console.WriteLine(parser);
                     var timeEnd = DateTime.Now;
                     TimeSpan diffTime = timeEnd - timeStart;
                     Console.WriteLine(", выражение проанализировано и вычислено за: " + (diffTime.TotalMilliseconds) + " милисекунд");
                 } else {
-                    parser.ShowResult();
+                    Console.WriteLine(parser);
                 }
             } else {  // Если ничего не ввели, то используем тестовые примеры
                 
@@ -35,10 +35,10 @@ namespace HT_1
                 foreach (string phrase in phrases) {
                     var timeStart = DateTime.Now;                
                     if (parserTest.Try(phrase)) {
-                        parserTest.ShowResult();
+                        Console.Write(parserTest);
                         Console.WriteLine(", вычислено за " + (DateTime.Now - timeStart).TotalMilliseconds + " милисекунд");
                     } else {
-                        parserTest.ShowResult();
+                        Console.WriteLine(parserTest);
                     }
                 }
             }
