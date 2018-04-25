@@ -11,9 +11,7 @@ namespace HT_1
         private string phrase; // парсируемое выражение
         private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
-        private bool errSt; // есть ли ошибка
-        private string mesError;  // ошибки парсирования
-        public string Phrase {
+       public string Phrase {
             get {
                 return phrase;
             }
@@ -21,14 +19,10 @@ namespace HT_1
                 phrase = value;
                 curIndex = 0;
                 result = 0;
-                errSt = false;
-                mesError = String.Empty;
             }
         }
         public int CurIndex { get { return curIndex; } }    
         public int Result { get {return result; } }
-        public bool ErrSt { get { return errSt; } }
-        public string MesError { get { return mesError; } }
         /// <summary>
         /// Конструктор по умолчанию
         /// </summary>
@@ -42,28 +36,22 @@ namespace HT_1
             Phrase = inPhrase;
         }
         /// <summary>
-        /// Вычисление рузльтата, true - если нет ошибок
+        /// Вычисление рузльтата
         /// </summary>
-        public bool Try() {
-            result = SubOrAdd();
-            return !errSt;  
+        public void Calculate() {                  
+            if (!string.IsNullOrEmpty(Phrase)) {
+                result = SubOrAdd();
+            } else {
+                NotParseException ex = new NotParseException(@"Пустая строка!", @"..." ,0);
+                throw ex;
+            }        
         }
         /// <summary>
-        /// Вычисление рузльтата, true - если нет ошибок
+        /// Вычисление рузльтата
         /// </summary>
-        public bool Try(string inPhrase) {
+        public void Calculate(string inPhrase) {
             Phrase = inPhrase;
-            return Try();
-        }
-        /// <summary>
-        /// Отображение результата или ошибки
-        /// </summary>
-        public override string ToString() {
-           if (!errSt) {
-                return phrase + "=" + result;
-           } else {
-                return "Ошибка: " + mesError + " В выражении: " + phrase + ", в " + curIndex + " символе c 0";
-           }            
+            Calculate();
         }
         /// <summary>
         /// Синтактический разбор выражения
@@ -81,9 +69,8 @@ namespace HT_1
                     int b = MultOrDiv();
                     num -= b;
                 } else {
-                    mesError= @"Цифра или оператор не определен!";
-                    errSt = true;
-                    return 0;
+                    NotParseException ex = new NotParseException(@"Цифра или оператор не определен!",phrase,curIndex);
+                    throw ex;
                 }
             }
             return num;
@@ -140,11 +127,17 @@ namespace HT_1
         /// </summary>
        /// <returns></returns>
         private int Num() {
+            int tempIndex = curIndex; 
             string buff = "0";
             for (; curIndex < phrase.Length && char.IsDigit(phrase[curIndex]); curIndex++) {
                 buff += phrase[curIndex];
             }
-            return int.Parse(buff);//01
+            int iBuff = 0;
+            if (int.TryParse(buff, out iBuff)) {
+                return iBuff;//01
+            } 
+                NotParseException ex = new NotParseException(@"Невозможно преобразовать в Integer!", phrase, tempIndex);
+                throw ex;        
         }
     }
 }
