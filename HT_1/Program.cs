@@ -14,7 +14,7 @@ namespace HT_1
         static void Main(string[] args)
         {
             // Выражения для тестирования
-            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2*3!-3", @"10!-3" };
+            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3" };
 
             Console.WriteLine("\tИспользуем класс SimpleParser");
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
@@ -82,7 +82,7 @@ namespace HT_1
                 foreach (var parserTimeTest in parserTimeTests) {
                     Console.WriteLine(parserTimeTest.Phrase + "=" + parserTimeTest.Result + ", вычислено за " + parserTimeTest.Time.TotalMilliseconds + " милисекунд");
                 }
-                Console.WriteLine("Проанализировано: "+ parserTimeTests.CountOpOk + " выражений и за " +parserTimeTests.SumTime.TotalMilliseconds +" милисекунд");
+                Console.WriteLine("Проанализировано: "+ parserTimeTests.CountOpOk + " выражений за " +parserTimeTests.SumTime.TotalMilliseconds +" милисекунд");
             }
         }
         public static void ShowError(string mesError, string phrase, int curIndex) {
