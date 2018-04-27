@@ -27,7 +27,7 @@ namespace HT_1
                     Console.WriteLine(parser.Phrase+"="+parser.Result+", выражение проанализировано и вычислено за: " + ((DateTime.Now - timeStart).TotalMilliseconds) + " милисекунд");
                 }
                 catch (NotParseException ex) {
-                    ShowError(ex.Message, ex.Phrase, ex.CurIndex);
+                    ShowError(ex);
                 }
                 catch (Exception ex) {
                     Console.WriteLine(ex);
@@ -42,7 +42,7 @@ namespace HT_1
                     }
                 }
                 catch (NotParseException ex) {
-                    ShowError(ex.Message, ex.Phrase, ex.CurIndex);
+                    ShowError(ex);
                 }
                 catch (Exception ex) {
                     Console.WriteLine(ex);
@@ -60,7 +60,7 @@ namespace HT_1
                     Console.WriteLine(parserTime.Phrase + "=" + parserTime.Result + ", вычислено за " + parserTime.SumTime.TotalMilliseconds + " милисекунд");
                 }
                 catch (NotParseException ex) {
-                    ShowError(ex.Message, ex.Phrase, ex.CurIndex);
+                    ShowError(ex);
                 }
                 catch (Exception ex) {
                     Console.WriteLine(ex);
@@ -74,7 +74,7 @@ namespace HT_1
                     parserTimeTests.Calculate();
                 }
                 catch (NotParseException ex) {
-                    ShowError(ex.Message, ex.Phrase, ex.CurIndex);
+                   ShowError(ex);
                 }
                 catch (Exception ex) {
                     Console.WriteLine(ex);
@@ -85,13 +85,13 @@ namespace HT_1
                 Console.WriteLine("Проанализировано: "+ parserTimeTests.CountOpOk + " выражений за " +parserTimeTests.SumTime.TotalMilliseconds +" милисекунд");
             }
         }
-        public static void ShowError(string mesError, string phrase, int curIndex) {
+        public static void ShowError(NotParseException ex) {
             ConsoleColor curBack = Console.BackgroundColor;
-            Console.Write("В выражении: " + phrase.Substring(0, curIndex));
+            Console.Write(ex.Message.Substring(0, ex.CurIndex));
             Console.BackgroundColor = ConsoleColor.Red;
-            Console.Write(phrase.Substring(curIndex, phrase.Length- curIndex));
+            Console.Write(ex.Message.Substring(ex.CurIndex, ex.EndIndex - ex.CurIndex));
             Console.BackgroundColor = curBack;
-            Console.WriteLine(" Ошибка: " + mesError);
+            Console.WriteLine(ex.Message.Substring(ex.EndIndex,ex.Message.Length- ex.EndIndex));
         }      
 
     }
