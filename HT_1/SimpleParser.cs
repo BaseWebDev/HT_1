@@ -83,7 +83,13 @@ namespace HT_1
             while (curIndex < phrase.Length) {
                 if (phrase[curIndex] == '!') {
                     curIndex++;
-                    num = Fact(num); ;
+                    try {
+                        num = Fact(num);
+                    }
+                    catch (OverflowException) {
+                        NotParseException ex = new NotParseException(@"Большое значение факториала!", phrase, curIndex);
+                        throw ex;
+                    }
                 } else {
                     return num;
                 }
@@ -96,10 +102,10 @@ namespace HT_1
         /// <param name="num">кол-во итераций</param>
         /// <returns></returns>
         private int Fact(int num) {
-            if (num == 1) {
-                return 1;
+            if (num == 2) {
+                return 2;
             }
-            return num * Fact(num - 1);
+            return checked (num * Fact(num - 1));
         }
         /// <summary>
         /// Произведение и деление

@@ -14,7 +14,7 @@ namespace HT_1
         static void Main(string[] args)
         {
             // Выражения для тестирования
-            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"1-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3" };
+            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"15!-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3"};
 
             Console.WriteLine("\tИспользуем класс SimpleParser");
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
