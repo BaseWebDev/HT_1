@@ -61,6 +61,7 @@ namespace HT_1
         /// </summary>
         /// <returns></returns>
         private int SubOrAdd() {
+            dateTimeOperation = DateTime.Now;
             int num = MultOrDiv();
             while (curIndex < phrase.Length) {
                 if (phrase[curIndex] == '+') {
@@ -164,7 +165,7 @@ namespace HT_1
                     Operand2 = operand2,
                     Result = result,
                     DateTimeRequest = this.dateTimeOperation,
-                    TimeExecution = this.dateTimeOperation - DateTime.Now
+                    TimeExecution = DateTime.Now - this.dateTimeOperation
                 });
             }
             

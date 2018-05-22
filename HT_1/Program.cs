@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace HT_1
 { 
@@ -10,7 +12,7 @@ namespace HT_1
     /// </summary>
     class Program
     {
-        
+        const string fileName = "historyParser.json";
         static void Main(string[] args)
         {
             // Выражения для тестирования
@@ -36,7 +38,7 @@ namespace HT_1
             } else {  // Если ничего не ввели, то используем тестовые примеры
                 try {
                     SimpleParser parserTest = new SimpleParser();  // Используем конструктор по умолчанию
-                    parserTest.OnCompleted += OutConsole;
+                    parserTest.OnCompleted += OutJson;
                     foreach (string phrase in phrases) {
                         var timeStart = DateTime.Now;
                         parserTest.Calculate(phrase);
@@ -99,6 +101,11 @@ namespace HT_1
         static void OutConsole(object sender, ParserEventArgs eventArgs) {
             Console.WriteLine(eventArgs.ToString());
         }
+        static void OutJson(object sender, ParserEventArgs eventArgs) {
+            var json = JsonConvert.SerializeObject(eventArgs, Formatting.Indented);
+            File.AppendAllText(fileName, json);
+        }
+
 
     }
 
