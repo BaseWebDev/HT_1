@@ -14,7 +14,7 @@ namespace HT_1
         static void Main(string[] args)
         {
             // Выражения для тестирования
-            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"15!-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3"};
+            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"9!-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3"};
 
             Console.WriteLine("\tИспользуем класс SimpleParser");
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
@@ -22,6 +22,7 @@ namespace HT_1
             if (!string.IsNullOrEmpty(stringForBase)) {  // Что-то ввели              
                 try {
                     SimpleParser parser = new SimpleParser(stringForBase);
+                    parser.OnCompleted += OutConsole;
                     var timeStart = DateTime.Now;
                     parser.Calculate();
                     Console.WriteLine(parser.Phrase+"="+parser.Result+", выражение проанализировано и вычислено за: " + ((DateTime.Now - timeStart).TotalMilliseconds) + " милисекунд");
@@ -35,6 +36,7 @@ namespace HT_1
             } else {  // Если ничего не ввели, то используем тестовые примеры
                 try {
                     SimpleParser parserTest = new SimpleParser();  // Используем конструктор по умолчанию
+                    parserTest.OnCompleted += OutConsole;
                     foreach (string phrase in phrases) {
                         var timeStart = DateTime.Now;
                         parserTest.Calculate(phrase);
@@ -92,7 +94,11 @@ namespace HT_1
             Console.Write(ex.Message.Substring(ex.CurIndex, ex.EndIndex - ex.CurIndex));
             Console.BackgroundColor = curBack;
             Console.WriteLine(ex.Message.Substring(ex.EndIndex,ex.Message.Length- ex.EndIndex));
-        }      
+        }
+
+        static void OutConsole(object sender, ParserEventArgs eventArgs) {
+            Console.WriteLine(eventArgs.ToString());
+        }
 
     }
 

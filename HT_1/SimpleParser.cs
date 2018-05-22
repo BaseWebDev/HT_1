@@ -2,8 +2,11 @@
 
 namespace HT_1
 {
+    
     class SimpleParser  // internal
     {
+        // Событие выполнения операции
+        public event EventHandler<ParserEventArgs> OnCompleted;
         /// <summary>
         /// Почему оставил
         /// Рихтер CLR via C# Глава Свойства без параметров стр 269
@@ -11,7 +14,8 @@ namespace HT_1
         private string phrase; // парсируемое выражение
         private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
-       public string Phrase {
+        private DateTime dateTimeOperation; // время начала операции
+        public string Phrase {
             get {
                 return phrase;
             }
@@ -42,8 +46,7 @@ namespace HT_1
             if (!string.IsNullOrEmpty(Phrase)) {
                 result = SubOrAdd();
             } else {
-                NotParseException ex = new NotParseException(@"Пустая строка!", @"..." ,0);
-                throw ex;
+                throw new NotParseException(@"Пустая строка!", @"..." ,0);
             }        
         }
         /// <summary>
@@ -54,7 +57,7 @@ namespace HT_1
             Calculate();
         }
         /// <summary>
-        /// Синтактический разбор выражения
+        /// Сложение и вычитание
         /// </summary>
         /// <returns></returns>
         private int SubOrAdd() {
@@ -63,20 +66,23 @@ namespace HT_1
                 if (phrase[curIndex] == '+') {
                     curIndex++;
                     int b = MultOrDiv();
+                    int temp = num;
                     num += b;
+                    SendHistory("Addition", temp, b, num);
                 } else if (phrase[curIndex] == '-') {
                     curIndex++;
                     int b = MultOrDiv();
+                    int temp = num;
                     num -= b;
+                    SendHistory("Subtraction", temp, b, num);
                 } else {
-                    NotParseException ex = new NotParseException(@"Цифра или оператор не определен!",phrase,curIndex);
-                    throw ex;
+                    throw new NotParseException(@"Цифра или оператор не определен!",phrase,curIndex);
                 }
             }
             return num;
         }
         /// <summary>
-        /// Синтактический разбор выражения
+        /// Факториал
         /// </summary>
         private int ParseFact() {
             int num = Num();
@@ -84,11 +90,12 @@ namespace HT_1
                 if (phrase[curIndex] == '!') {
                     curIndex++;
                     try {
+                        int temp = num;
                         num = Fact(num);
+                        SendHistory("Factorial", temp, num, num);
                     }
                     catch (OverflowException) {
-                        NotParseException ex = new NotParseException(@"Большое значение факториала!", phrase, curIndex);
-                        throw ex;
+                        throw new NotParseException(@"Большое значение факториала!", phrase, curIndex);
                     }
                 } else {
                     return num;
@@ -117,11 +124,15 @@ namespace HT_1
                 if (phrase[curIndex] == '*') {
                     curIndex++;
                     int b = ParseFact();
+                    int temp = num;
                     num *= b;
+                    SendHistory("Multiplication", temp, b, num);
                 } else if (phrase[curIndex] == '/') {
                     curIndex++;
                     int b = ParseFact();
+                    int temp = num;
                     num /= b;
+                    SendHistory("Division", temp, b, num);
                 } else {  // Если + или -, то
                     return num;
                 }
@@ -131,7 +142,7 @@ namespace HT_1
         /// <summary>
         /// Разбор числа
         /// </summary>
-       /// <returns></returns>
+        /// <returns></returns>
         private int Num() {
             int tempIndex = curIndex; 
             string buff = "0";
@@ -141,9 +152,22 @@ namespace HT_1
             int iBuff = 0;
             if (int.TryParse(buff, out iBuff)) {
                 return iBuff;//01
-            } 
-                NotParseException ex = new NotParseException(@"Невозможно преобразовать в Integer!", phrase, tempIndex);
-                throw ex;        
+            }
+            throw new NotParseException(@"Невозможно преобразовать в Integer!", phrase, tempIndex);
+        }
+
+        private void SendHistory(string operation, int operand1, int operand2, int result) {
+            if (OnCompleted != null) {
+                OnCompleted(this, new ParserEventArgs {
+                    NameOperation = operation,
+                    Operand1 = operand1,
+                    Operand2 = operand2,
+                    Result = result,
+                    DateTimeRequest = this.dateTimeOperation,
+                    TimeExecution = this.dateTimeOperation - DateTime.Now
+                });
+            }
+            
         }
     }
 }
