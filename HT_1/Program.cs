@@ -16,78 +16,29 @@ namespace HT_1
         static void Main(string[] args)
         {
             // Выражения для тестирования
-            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"9!-6*2+2-3", @"3!*2+2-3", @"3!+2*3", @"2m*3!-3", @"10!-3"};
-
-            Console.WriteLine("\tИспользуем класс SimpleParser");
-            Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
-            string stringForBase = Console.ReadLine();
-            if (!string.IsNullOrEmpty(stringForBase)) {  // Что-то ввели              
-                try {
-                    SimpleParser parser = new SimpleParser(stringForBase);
-                    parser.OnCompleted += OutConsole;
-                    var timeStart = DateTime.Now;
-                    parser.Calculate();
-                    Console.WriteLine(parser.Phrase+"="+parser.Result+", выражение проанализировано и вычислено за: " + ((DateTime.Now - timeStart).TotalMilliseconds) + " милисекунд");
-                }
-                catch (NotParseException ex) {
-                    ShowError(ex);
-                }
-                catch (Exception ex) {
-                    Console.WriteLine(ex);
-                }               
-            } else {  // Если ничего не ввели, то используем тестовые примеры
-                try {
-                    SimpleParser parserTest = new SimpleParser();  // Используем конструктор по умолчанию
-                    parserTest.OnCompleted += OutJson;
-                    foreach (string phrase in phrases) {
-                        var timeStart = DateTime.Now;
-                        parserTest.Calculate(phrase);
-                        Console.WriteLine(parserTest.Phrase + "=" + parserTest.Result + ", вычислено за " + (DateTime.Now - timeStart).TotalMilliseconds + " милисекунд");
-                    }
-                }
-                catch (NotParseException ex) {
-                    ShowError(ex);
-                }
-                catch (Exception ex) {
-                    Console.WriteLine(ex);
-                }
-            }
-            Console.WriteLine();
+            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"9!-6*2+2-3", @"3!*2+2-3", @"15!+2*3", @"2m*3!-3", @"10!-3"};          
             
-            Console.WriteLine("\tИспользуем класс-наследник SimpleParserTime");
+            Console.WriteLine("\t Парсер с поддержкой истории");
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
             string stringForHeir = Console.ReadLine();
+           
+            SimpleParserTime parserTimeTests = new SimpleParserTime();  // Используем конструктор по умолчанию
             if (!string.IsNullOrEmpty(stringForHeir)) {  // Что-то ввели
-                SimpleParserTime parserTime = new SimpleParserTime(stringForHeir);  // Вводим с консоли выражение для парсинга, используем конструктор для ввода выражения
-                try {
-                    parserTime.Calculate();
-                    Console.WriteLine(parserTime.Phrase + "=" + parserTime.Result + ", вычислено за " + parserTime.SumTime.TotalMilliseconds + " милисекунд");
-                }
-                catch (NotParseException ex) {
-                    ShowError(ex);
-                }
-                catch (Exception ex) {
-                    Console.WriteLine(ex);
-                }
-            } else {  // Если ничего не ввели, то используем тестовые примеры
-                SimpleParserTime parserTimeTests = new SimpleParserTime();  // Используем конструктор по умолчанию
+                parserTimeTests.Add(stringForHeir);
+            } else {
                 foreach (string phrase in phrases) {
                     parserTimeTests.Add(phrase);
                 }
-                try {
-                    parserTimeTests.Calculate();
-                }
-                catch (NotParseException ex) {
-                   ShowError(ex);
-                }
-                catch (Exception ex) {
-                    Console.WriteLine(ex);
-                }
-                foreach (var parserTimeTest in parserTimeTests) {
+            }     
+            parserTimeTests.Calculate();
+            foreach (var parserTimeTest in parserTimeTests) {
+                if (parserTimeTest.ParseException == null) {
                     Console.WriteLine(parserTimeTest.Phrase + "=" + parserTimeTest.Result + ", вычислено за " + parserTimeTest.Time.TotalMilliseconds + " милисекунд");
+                }  else {
+                    ShowError(parserTimeTest.ParseException);
                 }
-                Console.WriteLine("Проанализировано: "+ parserTimeTests.CountOpOk + " выражений за " +parserTimeTests.SumTime.TotalMilliseconds +" милисекунд");
             }
+            Console.WriteLine("Проанализировано: " + parserTimeTests.Count + " выражений за " + parserTimeTests.SumTime.TotalMilliseconds + " милисекунд");
         }
         public static void ShowError(NotParseException ex) {
             ConsoleColor curBack = Console.BackgroundColor;

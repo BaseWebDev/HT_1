@@ -3,7 +3,7 @@
 namespace HT_1
 {
     [Serializable]
-    public class NotParseException : ApplicationException {
+    public class NotParseException : Exception {
         public string Phrase {get; private set; }
         public int CurIndex { get; private set; }
         public int EndIndex { get; private set; }

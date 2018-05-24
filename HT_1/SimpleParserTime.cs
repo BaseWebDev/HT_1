@@ -4,18 +4,16 @@ using System.Collections.Generic;
 
 namespace HT_1 {
     /// <summary>
-    /// Пробуем наследование
+    /// Парсинг нескольких выражений
+    /// Считаем возникновение ошибки тоже результатом
     /// </summary>
     class SimpleParserTime : SimpleParser,IEnumerable<PhareResTime> {
-        private int countOpOk;
         private List<PhareResTime> phrases;
-        private TimeSpan sumTime;
+        public int Count { get => phrases.Count; }
         /// <summary>
         /// Время выполнения парсинга
         /// </summary>
-        public int CountOpOk { get => countOpOk; private set => countOpOk = value; }
-
-        public TimeSpan SumTime { get => sumTime; private set => sumTime = value; }
+        public TimeSpan SumTime { get; private set; }
       
         /// <summary>
         /// При вызове конструктора по умолчанию вызываем его из базового класса
@@ -38,12 +36,24 @@ namespace HT_1 {
         public virtual new void Calculate() {
             foreach (var phrase in phrases) {
                 DateTime timeStart = DateTime.Now;
+                DateTime timeEnd;
+                try {
                     Calculate(phrase.Phrase);
-                    DateTime timeEnd = DateTime.Now;
+                    timeEnd = DateTime.Now;
                     phrase.Result = Result;
-                    phrase.Time = timeEnd - timeStart;
-                    ++countOpOk;
-                    sumTime += phrase.Time;                  
+                }
+                catch (NotParseException ex) {
+                    phrase.ParseException = ex;
+                    timeEnd = DateTime.Now;
+                    phrase.Result = Result;
+                }
+                catch  {
+                    phrase.ParseException= new NotParseException("Неизвестная ошибка");
+                    return;
+                }                
+                phrase.Time = timeEnd - timeStart;
+                SumTime += phrase.Time;
+
             }
         }
         /// <summary>
