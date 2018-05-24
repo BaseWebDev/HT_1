@@ -38,6 +38,7 @@ namespace HT_1
                     ShowError(parserTimeTest.ParseException);
                 }
             }
+            Console.WriteLine();
             Console.WriteLine("Проанализировано: " + parserTimeTests.Count + " выражений за " + parserTimeTests.SumTime.TotalMilliseconds + " милисекунд");
         }
         public static void ShowError(NotParseException ex) {

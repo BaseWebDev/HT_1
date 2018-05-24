@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace HT_1 {
     /// <summary>
     /// Парсинг нескольких выражений
-    /// Считаем возникновение ошибки тоже результатом
     /// </summary>
     class SimpleParserTime : SimpleParser,IEnumerable<PhareResTime> {
         private List<PhareResTime> phrases;
@@ -45,10 +44,12 @@ namespace HT_1 {
                 catch (NotParseException ex) {
                     phrase.ParseException = ex;
                     timeEnd = DateTime.Now;
-                    phrase.Result = Result;
+                    phrase.Result = null;
                 }
                 catch  {
                     phrase.ParseException= new NotParseException("Неизвестная ошибка");
+                    timeEnd = DateTime.Now;
+                    phrase.Result = null;
                     return;
                 }                
                 phrase.Time = timeEnd - timeStart;
