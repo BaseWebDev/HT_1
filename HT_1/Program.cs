@@ -76,9 +76,6 @@ namespace HT_1
                 return new SimpleParserTime(); // Используем конструктор по умолчанию
             }
         }
-
-
-
     }
 
 }

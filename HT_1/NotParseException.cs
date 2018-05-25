@@ -17,17 +17,5 @@ namespace HT_1
             CurIndex = curIndex + "В выражении: ".Length;
             EndIndex = "В выражении: ".Length + phrase.Length;
        }
-
-        public NotParseException(string phrase, int curIndex, int endIndex) : this(phrase) {
-            CurIndex = curIndex;
-            EndIndex = endIndex;
-        }
-        
-                //public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-                //    PhraseEx = (string)info.GetValue("PhraseEx", typeof (string));
-                //    CurIndex = (int)info.GetValue("CurIndex", typeof(int));
-                //    EndIndex = (int)info.GetValue("EndIndex", typeof(int));
-                //}
-                
     }
 }
