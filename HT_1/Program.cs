@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace HT_1
@@ -13,33 +14,46 @@ namespace HT_1
     class Program
     {
         const string fileName = "historyParser.json";
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             // Выражения для тестирования
-            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"9!-6*2+2-3", @"3!*2+2-3", @"15!+2*3", @"2m*3!-3", @"10!-3"};          
-            
+            string[] phrases = new string[] { @"1+2*2", @"2+2*2", @"1-6/2", @"9!-6*2+2-3", @"15!+2*3", @"2m*3!-3", @"3!*2+2-3", @"10!-3" };         
+
             Console.WriteLine("\t Парсер с поддержкой истории");
+
+            SimpleParserTime parserTime = LoadJson();
+            if (parserTime.Count > 0) { 
+                Console.WriteLine("Загружено:");
+                foreach (var parserTimeTest in parserTime) {
+                    if (parserTimeTest.ParseException == null) {
+                        Console.WriteLine(parserTimeTest.Phrase + "=" + parserTimeTest.Result + ", вычислено за " + parserTimeTest.TimeOperation.TotalMilliseconds + " милисекунд");
+                    } else {
+                        ShowError(parserTimeTest.ParseException);
+                    }
+                }
+                Console.WriteLine();
+            }
             Console.WriteLine("Введите выражение для парсинга или нажмите Enter:");
             string stringForHeir = Console.ReadLine();
            
-            SimpleParserTime parserTimeTests = new SimpleParserTime();  // Используем конструктор по умолчанию
+            
+            parserTime.OnCompleted += SaveJson;
             if (!string.IsNullOrEmpty(stringForHeir)) {  // Что-то ввели
-                parserTimeTests.Add(stringForHeir);
+                parserTime.Add(stringForHeir);
             } else {
                 foreach (string phrase in phrases) {
-                    parserTimeTests.Add(phrase);
+                    parserTime.Add(phrase);
                 }
             }     
-            parserTimeTests.Calculate();
-            foreach (var parserTimeTest in parserTimeTests) {
+            parserTime.Calculate();
+            foreach (var parserTimeTest in parserTime) {
                 if (parserTimeTest.ParseException == null) {
-                    Console.WriteLine(parserTimeTest.Phrase + "=" + parserTimeTest.Result + ", вычислено за " + parserTimeTest.Time.TotalMilliseconds + " милисекунд");
+                    Console.WriteLine(parserTimeTest.Phrase + "=" + parserTimeTest.Result + ", вычислено за " + parserTimeTest.TimeOperation.TotalMilliseconds + " милисекунд");
                 }  else {
                     ShowError(parserTimeTest.ParseException);
                 }
             }
             Console.WriteLine();
-            Console.WriteLine("Проанализировано: " + parserTimeTests.Count + " выражений за " + parserTimeTests.SumTime.TotalMilliseconds + " милисекунд");
+            Console.WriteLine("Проанализировано: " + parserTime.Count + " выражений за " + parserTime.SumTime().TotalMilliseconds + " милисекунд");
         }
         public static void ShowError(NotParseException ex) {
             ConsoleColor curBack = Console.BackgroundColor;
@@ -49,14 +63,20 @@ namespace HT_1
             Console.BackgroundColor = curBack;
             Console.WriteLine(ex.Message.Substring(ex.EndIndex,ex.Message.Length- ex.EndIndex));
         }
+        static void SaveJson(object sender, ParserEventArgs<PhareResTime> eventArgs) {
+            var json = JsonConvert.SerializeObject((SimpleParserTime)sender, Formatting.Indented);
+            File.WriteAllText(fileName, json);
+        }
+        static SimpleParserTime LoadJson() {
+            if (File.Exists(fileName)){
+                var json =  File.ReadAllText(fileName);
+                var parserLine = JsonConvert.DeserializeObject<List<PhareResTime>>(json);
+                return new SimpleParserTime(parserLine);
+            } else {
+                return new SimpleParserTime(); // Используем конструктор по умолчанию
+            }
+        }
 
-        static void OutConsole(object sender, ParserEventArgs eventArgs) {
-            Console.WriteLine(eventArgs.ToString());
-        }
-        static void OutJson(object sender, ParserEventArgs eventArgs) {
-            var json = JsonConvert.SerializeObject(eventArgs, Formatting.Indented);
-            File.AppendAllText(fileName, json);
-        }
 
 
     }

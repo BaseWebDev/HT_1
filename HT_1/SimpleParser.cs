@@ -5,8 +5,6 @@ namespace HT_1
     
     class SimpleParser  // internal
     {
-        // Событие выполнения операции
-        public event EventHandler<ParserEventArgs> OnCompleted;
         /// <summary>
         /// Почему оставил
         /// Рихтер CLR via C# Глава Свойства без параметров стр 269
@@ -14,7 +12,6 @@ namespace HT_1
         private string phrase; // парсируемое выражение
         private int curIndex;   // текущий индекс
         private int result;  // результат парсинга/вычислений
-        private DateTime dateTimeOperation; // время начала операции
         public string Phrase {
             get {
                 return phrase;
@@ -61,7 +58,6 @@ namespace HT_1
         /// </summary>
         /// <returns></returns>
         private int SubOrAdd() {
-            dateTimeOperation = DateTime.Now;
             int num = MultOrDiv();
             while (curIndex < phrase.Length) {
                 if (phrase[curIndex] == '+') {
@@ -69,13 +65,11 @@ namespace HT_1
                     int b = MultOrDiv();
                     int temp = num;
                     num += b;
-                    SendHistory("Addition", temp, b, num);
                 } else if (phrase[curIndex] == '-') {
                     curIndex++;
                     int b = MultOrDiv();
                     int temp = num;
                     num -= b;
-                    SendHistory("Subtraction", temp, b, num);
                 } else {
                     throw new NotParseException(@"Цифра или оператор не определен!",phrase,curIndex);
                 }
@@ -93,7 +87,6 @@ namespace HT_1
                     try {
                         int temp = num;
                         num = Fact(num);
-                        SendHistory("Factorial", temp, num, num);
                     }
                     catch (OverflowException) {
                         throw new NotParseException(@"Большое значение факториала!", phrase, curIndex);
@@ -127,13 +120,11 @@ namespace HT_1
                     int b = ParseFact();
                     int temp = num;
                     num *= b;
-                    SendHistory("Multiplication", temp, b, num);
                 } else if (phrase[curIndex] == '/') {
                     curIndex++;
                     int b = ParseFact();
                     int temp = num;
                     num /= b;
-                    SendHistory("Division", temp, b, num);
                 } else {  // Если + или -, то
                     return num;
                 }
@@ -157,18 +148,6 @@ namespace HT_1
             throw new NotParseException(@"Невозможно преобразовать в Integer!", phrase, tempIndex);
         }
 
-        private void SendHistory(string operation, int operand1, int operand2, int result) {
-            if (OnCompleted != null) {
-                OnCompleted(this, new ParserEventArgs {
-                    NameOperation = operation,
-                    Operand1 = operand1,
-                    Operand2 = operand2,
-                    Result = result,
-                    DateTimeRequest = this.dateTimeOperation,
-                    TimeExecution = DateTime.Now - this.dateTimeOperation
-                });
-            }
-            
-        }
+        
     }
 }
